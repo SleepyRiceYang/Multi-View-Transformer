@@ -405,7 +405,7 @@ class GatedSmoothLoss(nn.Cell):
         self.use_cent_loss = use_cent_loss
         self.beta = 1
 
-        from models.center_loss import CenterLoss  # You'll need to import CenterLoss from your MindSpore models.
+        from models.center_loss import CenterLoss 
         self.center_loss = CenterLoss(num_classes=config['data']['num_classes'], feat_dim=16, use_gpu=True)
         self.cross_entropy_loss = SmoothCrossEntropyWithMask()
 
