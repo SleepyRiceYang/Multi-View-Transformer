@@ -1,0 +1,82 @@
+task: EGFR_2_classification
+
+data:
+  dataset: EGFR_whole_lung
+  data_root: /root/workspace/gene/full_lung_code/code/training_files
+  bbox_path: /root/workspace/gene/full_lung_code/code/training_files/all_data_box.txt
+  train_file: zkf_train_list.pkl
+  val_file: zkf_val_list.pkl
+  test_file: zkf_test_list.pkl
+  in_channels: 1
+  num_classes: 2
+  lung_crop: [48,300, 300]
+  bbox_size: [200,200,200]
+  normalize:
+    mean: None
+    std: None
+
+train: 
+  batch_size: 4
+  num_workers: 8
+  pin_memory: true
+  aug_trans:
+    trans_seq: [wc_ww, to_tensor]
+    center_crop:
+      size: [48, 240, 360]
+    wc_ww: 
+      wc: -500
+      ww: 1800
+
+eval:
+  batch_size: 4
+  num_workers: 8
+  pin_memory: true
+  aug_trans:
+    trans_seq: [wc_ww, to_tensor]
+    center_crop:
+      size: [48, 240, 360]
+    wc_ww: 
+      wc: -500
+      ww: 1800
+  ckpt_path: None 
+  
+inference:
+  npy_dir: /root/workspace/gene/full_lung_code/code/figure_code
+logging:
+  use_logging: true
+  use_tensorboard: true
+
+optim:
+  num_epochs: 100
+  optim_method: adam
+  sgd:
+    base_lr: 1e-2
+    momentum: 0.9
+    weight_decay: 5e-4
+    nesterov: false
+  adam:
+    base_lr: 1e-3
+    betas: [0.9, 0.999]
+    weight_decay: 1e-4
+    momentum: 0.9
+    amsgrad: false
+  use_lr_decay: true
+  lr_decay_method: lambda
+  cosine: None
+  warmup_cosine: None
+
+criterion:
+  criterion_method: cross_entropy
+  ordered_loss:
+    alpha: 1
+    beta: 0.01
+
+network:
+  model_name: mv_model
+  init_features: 64
+  pretrained: false
+  model_suffix: lung_bbox
+  drop_prob: 0.7
+  use_parallel: false
+  seed: 22
+  num_gpus: 0
